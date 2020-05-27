@@ -2,7 +2,9 @@ const treeToVars = (config, env = process.env, prefix = "_APP") => {
   let keys = Object.keys(config);
   return keys.map((key) => {
     let value = config[key];
-
+    if(key === '__env') {
+      return treeToVars(value, '');
+    }
     if (key.includes('_')) {
       console.warn('config key ', key, 'includes an underscore, which may result in unexpected behavior')
     }
@@ -62,7 +64,13 @@ const varsToTree = (env = process.env, stripPrefix = "_APP") => {
   let result = {};
   Object.keys(env).forEach((key) => {
     let value = coerceRawValue(env[key]);
-    let objectPath = key.toLowerCase().slice(stripPrefix.length + 1).split('_');
+    let objectPath;
+    if(key.startsWith(stripPrefix)){
+      objectPath = key.toLowerCase().slice(stripPrefix.length + 1).split('_');
+    } else {
+      objectPath = key.toLowerCase().split('_');
+      objectPath.unshift('__env')
+    }
     assignPath(result, objectPath, value);
   });
   return result;
