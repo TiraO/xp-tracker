@@ -50,7 +50,6 @@ elif [ -e ~/.bash_profile ]; then
     echo '~/.bash_profile'
 fi`);
 
-  bashConfigPath = bashConfigPath.slice(0, bashConfigPath.length -1); // strip off newline character
   console.log("found config at ", bashConfigPath);
   if (bash(`cat ${bashConfigPath} | grep '${appName} setup'`)) {
     console.log("user shell already configured for app.")
