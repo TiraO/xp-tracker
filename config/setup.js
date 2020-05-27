@@ -52,7 +52,7 @@ fi`);
     console.log("configuring user shell for app");
     bash(`
     echo '# ${appName} setup' >> ${bashConfigPath}
-    echo 'export FLYWAY_CONFIG_FILES=${path.join(__dirname, 'flyway.generated.conf')}' >> ${bashConfigPath}
+    echo 'export FLYWAY_CONFIG_FILES=config/flyway.generated.conf >> ${bashConfigPath}
     `)
   }
   // TODO: install and use homebrew
