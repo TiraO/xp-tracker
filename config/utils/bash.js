@@ -51,4 +51,6 @@ const bashFactory = (config) => {
   return bash;
 };
 
+const bash = bashFactory({});
+
 module.exports = bashFactory;

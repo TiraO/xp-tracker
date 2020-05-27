@@ -31,7 +31,9 @@ let setupDatabase = async function (config, bash) {
   console.log("installing and running flyway");
   if (!bash('which flyway')) {
     // TODO
-    // bash('cd ~/Applications && wget -qO- https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/6.4.2/flyway-commandline-6.4.2-linux-x64.tar.gz | tar xvz && sudo ln -s `pwd`/flyway-6.4.2/flyway /usr/local/bin')
+    console.log("Attempting to install flyway");
+    bash('brew install flyway', true)
+
   }
   bash('flyway migrate', true);
 };
@@ -39,9 +41,6 @@ const prepareDevEnvironment = async () => {
   const appName = "xptracker";
   const config = configTree();
   const bash = bashFactory(config);
-
-  let homeDirectory = bash("cd ~/ && pwd");
-  console.log("identified user home:", homeDirectory);
 
   let bashConfigPath = bash(`
 if [ -e ~/.bashrc ]; then
@@ -62,13 +61,33 @@ fi`);
   }
   // TODO: install and use homebrew
   if (!bash('which brew')) {
-    // bash(`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"`)
-    // bash(`echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> ~/.bashrc`)
+    console.log("Installing Homebrew");
+    bash(`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"`)
+    if (isLinux()) {
+      bash(`echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> ${bashConfigPath}`)
+      bash(`brew tap linuxbrew/xorg`)
+    }
   }
   await setupDatabase(config, bash);
 
   console.log('done');
   process.exit(0);
+};
+
+const isLinux = () => {
+  return !isMacOs(); // close enough
+};
+const isMacOs = () => {
+  let bash = bashFactory({});
+  return bash('unameOut="$(uname -s)"\n' +
+    'case "${unameOut}" in\n' +
+    '    Linux*)     machine=Linux;;\n' +
+    '    Darwin*)    machine=Mac;;\n' +
+    '    CYGWIN*)    machine=Cygwin;;\n' +
+    '    MINGW*)     machine=MinGw;;\n' +
+    '    *)          machine="UNKNOWN:${unameOut}"\n' +
+    'esac\n' +
+    'echo ${machine}') === 'Mac'
 };
 
 return prepareDevEnvironment();
