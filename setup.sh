@@ -1,3 +1,3 @@
 yarn install
 
-node ./src/config/setup.js
+node ./config/setup.js
