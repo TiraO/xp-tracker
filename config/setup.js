@@ -9,7 +9,7 @@ const createFlywayConf = async (datasourceConfig) => {
   let datasourceUrl = connectionString(datasourceConfig);
   let fileContents = `
 flyway.url=${datasourceUrl}
-flyway.locations=filesystem:src/config/migrations
+flyway.locations=filesystem:config/migrations
 `;
   await createFile(path.join(__dirname, 'flyway.generated.conf'), fileContents);
 };

@@ -1,4 +1,5 @@
 const childProcess = require("child_process");
+const path = require('path');
 const { treeToVars } = require("../config_helper");
 const uft8Error = (error) => {
   if (error.output) {
@@ -15,17 +16,18 @@ const bashFactory = (config) => {
   const bash = (command, raiseOnError = false, options = {}) => {
     console.log('             $ ', command);
     let output;
+    let appDirectory = path.join(__dirname, '..', '..');
     try {
       let envVars = { ...treeToVars(config), ...process.env};
       output = childProcess.execSync(command,
         {
+          shell: '/bin/bash',
+          cwd: appDirectory,
+          ...options,
           env: {
             ...envVars,
             ...options.env
           },
-
-          ...options,
-          shell: '/bin/bash'
         });
     } catch (error) {
       uft8Error(error);
