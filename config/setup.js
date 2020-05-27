@@ -17,7 +17,12 @@ flyway.locations=filesystem:config/migrations
 let setupDatabase = async function (config, bash) {
   await createFlywayConf(config.datasource);
   console.log("creating database");
-  let postgresSuperUser = 'postgres';
+  let postgresSuperUser = bash('if id "postgres" >/dev/null 2>&1; then\n' +
+    '    echo "postgres"\n' +
+    'else\n' +
+    '    # macOS can use current user\n' +
+    '    whoami\n' +
+    'fi');
   bash(`sudo -u ${postgresSuperUser} psql -c "CREATE USER ${config.datasource.user} with password '${config.datasource.password}'"`);
   bash(`sudo -u ${postgresSuperUser} psql -c "ALTER USER ${config.datasource.user} with password '${config.datasource.password}'"`, true);
   bash(`sudo -u ${postgresSuperUser} dropdb ${config.datasource.database} -p ${config.datasource.port} --if-exists`);
@@ -44,6 +49,7 @@ if [ -e ~/.bashrc ]; then
 elif [ -e ~/.bash_profile ]; then
     echo '~/.bash_profile'
 fi`);
+
   bashConfigPath = bashConfigPath.slice(0, bashConfigPath.length -1); // strip off newline character
   console.log("found config at ", bashConfigPath);
   if (bash(`cat ${bashConfigPath} | grep '${appName} setup'`)) {

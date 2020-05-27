@@ -41,8 +41,8 @@ const bashFactory = (config) => {
 
     if (output) {
       let returnString = output.toString('utf8');
-      if (returnString.endsWith('\n')) {
-        returnString.slice(0, returnString.length - 1);
+      while (returnString.endsWith('\n')) {
+        returnString = returnString.slice(0, returnString.length - 1);
       }
       console.log(returnString);
       return returnString;
