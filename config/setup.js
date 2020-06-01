@@ -45,7 +45,7 @@ const prepareDevEnvironment = async () => {
   let bashConfigPath = bash(`
 if [ -e ~/.bashrc ]; then
     echo '~/.bashrc'
-elif [ -e ~/.bash_profile ]; then
+else
     echo '~/.bash_profile'
 fi`);
 
@@ -54,10 +54,8 @@ fi`);
     console.log("user shell already configured for app.")
   } else {
     console.log("configuring user shell for app");
-    bash(`
-    echo '# ${appName} setup' >> ${bashConfigPath}
-    echo 'export FLYWAY_CONFIG_FILES=config/flyway.generated.conf >> ${bashConfigPath}
-    `)
+    bash(`echo '# ${appName} setup' >> ${bashConfigPath}`)
+    bash(`echo 'export FLYWAY_CONFIG_FILES=config/flyway.generated.conf' >> ${bashConfigPath}`)
   }
   // TODO: install and use homebrew
   if (!bash('which brew')) {

@@ -9,6 +9,11 @@ Make sure you have installed
 - yarn
 - postgres
 
+Also, make sure they are added to your path. If you installed postgres with homebrew you may need something like
+```
+brew link postgresql@10 --force
+```
+
 Run:
 ```bash
 ./setup.sh
