@@ -8,10 +8,10 @@ app.listen(PORT, function () {
 });
 
 const pool = new Pool({
-    user: 'postgres',
+    user: 'app_admin',
     host: 'localhost',
-    database: 'postgres',
-    password: 'null',
+    database: 'xptracker',
+    password: 'password123',
     port: 5432,
 });
 
@@ -22,7 +22,7 @@ let addScore = async (person, score, description) => {
         description: description,
     };
     await pool.query('BEGIN');
-    await pool.query("INSERT INTO assignments (id, person, score, description) VALUES (1, 'Hamad', 50, 'Mission Log 1');")
+    await pool.query("INSERT INTO assignments (person, score, description) VALUES ('Hamad', 50, 'Mission Log 1');")
 
     await pool.query('COMMIT');
 
