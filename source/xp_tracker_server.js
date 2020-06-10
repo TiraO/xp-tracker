@@ -22,10 +22,10 @@ let addScore = async (person, score, description) => {
         description: description,
     };
     await pool.query('BEGIN');
-    await pool.query("INSERT INTO assignments (person, score, description) VALUES ('Hamad', 50, 'Mission Log 1');")
+    await pool.query("INSERT INTO assignments (person, score, description) VALUES ('"+ person + "'," + score + ", '" + description +"');")
 
     await pool.query('COMMIT');
 
 };
-addScore();
+addScore("Hamad", 100, "Mission Log 2");
 
