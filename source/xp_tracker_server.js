@@ -22,7 +22,7 @@ let addScore = async (person, score, description) => {
         description: description,
     };
     await pool.query('BEGIN');
-    await pool.query("INSERT INTO public.assignments (id, person, score, description) VALUES (1, 'Hamad', 50, 'Mission Log 1');")
+    await pool.query("INSERT INTO assignments (id, person, score, description) VALUES (1, 'Hamad', 50, 'Mission Log 1');")
 
     await pool.query('COMMIT');
 
