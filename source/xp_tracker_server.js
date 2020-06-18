@@ -13,6 +13,10 @@ app.post("/assignments", jsonParser, (request, response) => {
   response.send("some text");
 });
 
+app.post("/slack-events", jsonParser, (request, response)=>{
+  response.send(request.body.challenge);
+});
+
 app.listen(PORT, function () {
   console.log('App listening on port ' + PORT);
 });
