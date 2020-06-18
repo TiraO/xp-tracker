@@ -3,18 +3,18 @@
   "version": "1.0.0",
   "description": "Build flashcards with markdown!",
   "scripts": {
-    "start": "node src/quizapp-server.js",
+    "start": "node source/xp_tracker_server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/raphaelpierquin/ouicards.git"
+    "url": "git+https://github.com/TiraO/xp-tracker.git"
   },
   "author": "Tira Odhner",
   "bugs": {
     "url": "https://github.com/TiraO/quizapp/issues"
   },
-  "homepage": "https://github.com/TiraO/quizapp",
+  "homepage": "https://xp-tracker-js.herokuapp.com",
   "dependencies": {
     "axios": "^0.19.2",
     "express": "^4.17.1",
