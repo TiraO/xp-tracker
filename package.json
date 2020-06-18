@@ -19,6 +19,7 @@
     "axios": "^0.19.2",
     "express": "^4.17.1",
     "markdown-it": "^11.0.0",
-    "pg": "^8.2.1"
+    "pg": "^8.2.1",
+    "body-parser": "latest"
   }
 }
