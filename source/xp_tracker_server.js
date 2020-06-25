@@ -14,7 +14,13 @@ app.post("/assignments", jsonParser, (request, response) => {
 });
 
 app.post("/slack-events", jsonParser, (request, response)=>{
-  response.send(request.body.challenge);
+  let event = request.body;
+  if(event.type == "url_verification") {
+    response.send(event.challenge);
+  } else if(event.type == "app_mention"){
+    let scoreMatcher = /<[^>]*> ([A-z' ]+) score[a-z]* (\d+) on (.+)/
+    scoreMatcher.exec()
+  }
 });
 
 app.listen(PORT, function () {

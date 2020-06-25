@@ -17,9 +17,11 @@
   "homepage": "https://xp-tracker-js.herokuapp.com",
   "dependencies": {
     "axios": "^0.19.2",
+    "body-parser": "latest",
+    "chai": "^4.2.0",
     "express": "^4.17.1",
     "markdown-it": "^11.0.0",
-    "pg": "^8.2.1",
-    "body-parser": "latest"
+    "mocha": "^8.0.1",
+    "pg": "^8.2.1"
   }
 }
