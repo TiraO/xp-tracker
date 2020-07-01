@@ -1,3 +1,4 @@
+let AssignmentParser = require("./assignment_parser")
 let express = require('express');
 const { Pool, Client } = require('pg')
 let app = express();
@@ -18,9 +19,15 @@ app.post("/slack-events", jsonParser, (request, response)=>{
   if(event.type == "url_verification") {
     response.send(event.challenge);
   } else if(event.type == "app_mention"){
-    let scoreMatcher = /<[^>]*> ([A-z' ]+) score[a-z]* (\d+) on (.+)/
-    scoreMatcher.exec()
+    let parser = new AssignmentParser();
+
+    let assignment = parser.messageToAssignment(event.text)
+    response.send(assignment);
+    addScore(assignment.person,assignment.score,assignment.description);
+  } else {
+    response.send("Error");
   }
+
 });
 
 app.listen(PORT, function () {
