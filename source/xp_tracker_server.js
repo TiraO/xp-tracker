@@ -48,6 +48,7 @@ let addScore = async (person, score, description) => {
     score: score,
     description: description,
   };
+  console.log(person + "got a" + score + "on" + description);
   await pool.query('BEGIN');
   await pool.query("INSERT INTO assignments (person, score, description) VALUES ($1, $2, $3);", [person, score, description])
   await pool.query('COMMIT');
