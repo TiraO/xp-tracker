@@ -2,7 +2,7 @@ const treeToVars = (config, env = process.env, prefix = "_APP") => {
   let keys = Object.keys(config);
   return keys.map((key) => {
     let value = config[key];
-    if(key === '__env') {
+    if (key === '__env') {
       return treeToVars(value, '');
     }
     if (key.includes('_')) {
@@ -65,7 +65,7 @@ const varsToTree = (env = process.env, stripPrefix = "_APP") => {
   Object.keys(env).forEach((key) => {
     let value = coerceRawValue(env[key]);
     let objectPath;
-    if(key.startsWith(stripPrefix)){
+    if (key.startsWith(stripPrefix)) {
       objectPath = key.toLowerCase().slice(stripPrefix.length + 1).split('_');
     } else {
       objectPath = key.toLowerCase().split('_');
@@ -97,10 +97,15 @@ const configVars = (envName) => {
 const configTree = (envName) => {
   return varsToTree(configVars(envName));
 };
-const connectionString = (datasourceConfig)=>{
-  let {host, port, database, user, password} = datasourceConfig;
+const connectionString = (datasourceConfig) => {
+  let { host, port, database, user, password } = datasourceConfig;
   // return `postgresql://${user}:${password}@${host}:${port}/${database}`;
   return `jdbc:postgresql://${host}:${port}/${database}?password=${password}&user=${user}`;
+};
+const parseDatabaseUrl = (databaseUrl) => {
+  let [matchedPortion, user, password, host, port, database] =
+    /postgres:\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/([^?]+)/.exec(databaseUrl);
+  return { user, password, host, port, database };
 };
 
 module.exports = {
@@ -109,5 +114,6 @@ module.exports = {
   varsToTree,
   assignPath,
   configVars,
-  configTree
+  configTree,
+  parseDatabaseUrl
 };
