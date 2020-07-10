@@ -26,6 +26,7 @@ app.post("/slack-events", jsonParser, (request, response)=>{
     response.send(assignment);
     addScore(assignment.person,assignment.score,assignment.description);
   } else {
+    console.log(JSON.stringify(event));
     response.send("Error");
   }
 
