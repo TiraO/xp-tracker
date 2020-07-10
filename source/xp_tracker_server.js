@@ -16,6 +16,7 @@ app.post("/assignments", jsonParser, (request, response) => {
 
 app.post("/slack-events", jsonParser, (request, response)=>{
   let event = request.body;
+  console.log("received " + event.type + " event from Slack.")
   if(event.type == "url_verification") {
     response.send(event.challenge);
   } else if(event.type == "app_mention"){
