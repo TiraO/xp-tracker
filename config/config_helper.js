@@ -114,5 +114,6 @@ module.exports = {
   varsToTree,
   assignPath,
   configVars,
-  configTree
+  configTree,
+  parseDatabaseUrl
 };
