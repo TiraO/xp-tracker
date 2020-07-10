@@ -15,11 +15,12 @@ app.post("/assignments", jsonParser, (request, response) => {
 });
 
 app.post("/slack-events", jsonParser, (request, response)=>{
-  let event = request.body;
-  console.log("received " + event.type + " event from Slack.")
-  if(event.type == "url_verification") {
-    response.send(event.challenge);
-  } else if(event.type == "app_mention"){
+  let action = request.body;
+  console.log("received " + action.type + " action from Slack.")
+  if(action.type == "url_verification") {
+    response.send(action.challenge);
+  } else if(action.type == "event_callback"){
+    let event = action.event;
     let parser = new AssignmentParser();
 
     let assignment = parser.messageToAssignment(event.text)
