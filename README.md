@@ -21,7 +21,7 @@ Run:
 
 ### Run locally
 ```bash
-node server.js
+yarn start
 ```
 
 
