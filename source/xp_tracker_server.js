@@ -4,7 +4,8 @@ let { Pool, Client } = require('pg')
 let app = express();
 let bodyParser = require('body-parser')
 let PORT = process.env.PORT || 3002;
-let config = require ('../config/default_env')
+let { configTree } = require("../config/config_helper")
+let config = configTree();
 
 app.use(bodyParser.json({ type: 'application/*+json' }));
 let jsonParser = bodyParser.json();
@@ -15,16 +16,16 @@ app.post("/assignments", jsonParser, (request, response) => {
   response.send("some text");
 });
 
-app.post("/slack-events", jsonParser, (request, response)=>{
+app.post("/slack-events", jsonParser, (request, response) => {
   let event = request.body;
-  if(event.type == "url_verification") {
+  if (event.type == "url_verification") {
     response.send(event.challenge);
-  } else if(event.type == "app_mention"){
+  } else if (event.type == "app_mention") {
     let parser = new AssignmentParser();
 
     let assignment = parser.messageToAssignment(event.text)
     response.send(assignment);
-    addScore(assignment.person,assignment.score,assignment.description);
+    addScore(assignment.person, assignment.score, assignment.description);
   } else {
     response.send("Error");
   }
