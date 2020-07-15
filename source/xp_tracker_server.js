@@ -45,6 +45,7 @@ let addScore = async (person, score, description) => {
 
   let scoreConfirm = person + " got a " + score + " on " + description;
   console.log(scoreConfirm);
+  console.log("config.slackBotAuth", config.slackBotAuth);
   axios({
     method: 'post',
     url: 'https://tirasjsclass.slack.com/api/chat.meMessage?',
