@@ -53,7 +53,7 @@ let addScore = async (person, score, description) => {
       text: scoreConfirm
     },
     headers: {
-      Authorization: "Bearer " // FIXME add the token from https://api.slack.com/apps/A013Q8TUV8C/oauth?, but don't commit it.
+      Authorization: "Bearer " + config.slackBotAuth
     }
   }).catch((error)=>{
     console.error(error);
