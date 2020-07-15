@@ -1,11 +1,12 @@
 let AssignmentParser = require("./assignment_parser")
 let express = require('express');
-let { Pool, Client } = require('pg')
+let { Pool, Client } = require('pg');
 let app = express();
-let bodyParser = require('body-parser')
+let bodyParser = require('body-parser');
 let PORT = process.env.PORT || 3002;
 let { configTree } = require("../config/config_helper")
 let config = configTree();
+let axios = require("axios");
 
 app.use(bodyParser.json({ type: 'application/*+json' }));
 let jsonParser = bodyParser.json();
@@ -42,7 +43,23 @@ let pool = new Pool(config.datasource);
 
 let addScore = async (person, score, description) => {
 
-  console.log(person + " got a " + score + " on " + description);
+  let scoreConfirm = person + " got a " + score + " on " + description;
+  console.log(scoreConfirm);
+  axios({
+    method: 'post',
+    url: 'https://tirasjsclass.slack.com/api/chat.meMessage?',
+    data: {
+      channel: "general",
+      text: scoreConfirm
+    },
+    headers: {
+      Authorization: "Bearer " // FIXME add the token from https://api.slack.com/apps/A013Q8TUV8C/oauth?, but don't commit it.
+    }
+  }).catch((error)=>{
+    console.error(error);
+  });
+
+
   await pool.query('BEGIN');
   await pool.query("INSERT INTO assignments (person, score, description) VALUES ($1, $2, $3);", [person, score, description])
   await pool.query('COMMIT');
