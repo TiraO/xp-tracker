@@ -71,8 +71,9 @@ let submitScore = async (person, score, description) => {
 
 let getOverallScore = async (person) => {
 
-  let response = await pool.query("select sum(score) from assignments where person = $1;", [person]);
-  let overallScore = response.rows[0];
+  let response = await pool.query("select sum(score) as xp from assignments where person = $1;", [person]);
+  let row = response.rows[0];
+  let overallScore = row.xp;
   let overallScoreMessage = person + " has " + overallScore + " xp";
 
   axios({
