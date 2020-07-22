@@ -94,9 +94,8 @@ const configVars = (envName) => {
 
 };
 
-const configTree = (envName) => {
-  return varsToTree(configVars(envName));
-};
+const configTree = rawConfigTree;
+
 const connectionString = (datasourceConfig) => {
   let { host, port, database, user, password } = datasourceConfig;
   // return `postgresql://${user}:${password}@${host}:${port}/${database}`;
