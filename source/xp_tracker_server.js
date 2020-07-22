@@ -13,7 +13,7 @@ let jsonParser = bodyParser.json();
 
 app.post("/assignments", jsonParser, (request, response) => {
   console.log(request.body);
-  addScore(request.body.person, request.body.score, request.body.description);
+  submitScore(request.body.person, request.body.score, request.body.description);
   response.send("some text");
 });
 
@@ -24,14 +24,16 @@ app.post("/slack-events", jsonParser, (request, response) => {
   if (body.type == "url_verification") {
     response.send(body.challenge);
   } else if (body.event.type == "app_mention") {
-    let parser = new AssignmentParser();
-
-    let assignment = parser.messageToAssignment(message);
-    response.send(assignment);
-    addScore(assignment.person, assignment.score, assignment.description);
+    // let parser = new AssignmentParser();
+    //
+    // let assignment = parser.messageToAssignment(message);
+    // response.send(assignment);
+    // submitScore(assignment.person, assignment.score, assignment.description);
+    response.send(getOverallScore("Eric"))
   } else {
     response.send("Error");
   }
+
 
 });
 
@@ -41,7 +43,7 @@ app.listen(PORT, function () {
 
 let pool = new Pool(config.datasource);
 
-let addScore = async (person, score, description) => {
+let submitScore = async (person, score, description) => {
 
   let scoreConfirm = person + " got a " + score + " on " + description;
   console.log(scoreConfirm);
@@ -66,3 +68,25 @@ let addScore = async (person, score, description) => {
   await pool.query('COMMIT');
 
 };
+
+let getOverallScore = async (person) => {
+
+  let rows = await pool.query("select sum(score) where person = $1", [person])
+  let overallScore = rows[0]
+  let overallScoreMessage = person + " has " + overallScore + " xp"
+
+  axios({
+    method: 'post',
+    url: 'https://tirasjsclass.slack.com/api/chat.meMessage?',
+    data: {
+      channel: "general",
+      text: overallScoreMessage
+    },
+    headers: {
+      Authorization: "Bearer " + config.slackBotAuth
+    }
+  }).catch((error)=>{
+    console.error(error);
+  });
+  return overallScoreMessage
+}
