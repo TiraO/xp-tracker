@@ -1,4 +1,4 @@
-let AssignmentParser = require("../source/assignment_parser")
+let AssignmentParser = require("../source/message_parser")
 let {expect} = require('chai');
 
 describe("AssignmentParser", () => {
@@ -8,8 +8,7 @@ describe("AssignmentParser", () => {
   });
 
   describe("scoreMatcher", () => {
-
-    it('should parse out the student name, score, and assignment name', function () {
+    it('should parse out the student name, score, and assignment name', ()=> {
       let matchResults = parser.scoreMatcher.exec("<@ASDASD123> Eric scored 97 on assignment 3");
       expect(matchResults).to.deep.eq([
         "<@ASDASD123> Eric scored 97 on assignment 3",
@@ -27,4 +26,13 @@ describe("AssignmentParser", () => {
       })
     });
   });
-})
+
+
+  describe("nameFromScoreRequest", () => {
+    it('should return the name of the student', () => {
+      let name = parser.nameFromScoreRequest("<@xp-track> What is Carolyn's XP?")
+      expect(name).to.eq("Carolyn");
+    })
+  })
+
+});

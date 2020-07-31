@@ -1,4 +1,4 @@
-let AssignmentParser = require("./assignment_parser")
+let MessageParser = require("./message_parser")
 let express = require('express');
 let { Pool, Client } = require('pg');
 let app = express();
@@ -24,7 +24,7 @@ app.post("/slack-events", jsonParser, (request, response) => {
   if (body.type == "url_verification") {
     response.send(body.challenge);
   } else if (body.event.type == "app_mention") {
-    // let parser = new AssignmentParser();
+    // let parser = new MessageParser();
     //
     // let assignment = parser.messageToAssignment(message);
     // response.send(assignment);

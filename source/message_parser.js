@@ -1,4 +1,4 @@
-class AssignmentParser {
+class MessageParser {
   constructor() {
     this.scoreMatcher = /<[^>]*> ([A-z' ]+) score[a-z]* (\d+) on (.+)/
   }
@@ -10,6 +10,12 @@ class AssignmentParser {
       score: Number.parseInt(matchResults[2])
     }
   }
+  nameFromScoreRequest(message) {
+    let scoreRequest = /<[^>]*> what..?s ([A-z]+)'s (score|xp)\?/i
+    let matchResults = scoreRequest.exec(message);
+    let name = matchResults[1];
+    return name;
+  }
 }
 
-module.exports = AssignmentParser;
+module.exports = MessageParser;
