@@ -17,23 +17,26 @@ app.post("/assignments", jsonParser, (request, response) => {
   response.send("some text");
 });
 
-app.post("/slack-events", jsonParser, (request, response) => {
+app.post("/slack-events", jsonParser, async (request, response) => {
   console.log(request.body);
   let body = request.body;
   let message = body.event.text;
   if (body.type == "url_verification") {
     response.send(body.challenge);
   } else if (body.event.type == "app_mention") {
-    // let parser = new MessageParser();
-    //
+    let parser = new MessageParser();
     // let assignment = parser.messageToAssignment(message);
     // response.send(assignment);
     // submitScore(assignment.person, assignment.score, assignment.description);
-    response.send(getOverallScore("Eric"))
+    let name = parser.nameFromScoreRequest(message)
+
+    let scoreMessage = await getOverallScore(name)
+    response.send(scoreMessage);
+
+    console.log(name,scoreMessage)
   } else {
     response.send("Error");
   }
-
 
 });
 
