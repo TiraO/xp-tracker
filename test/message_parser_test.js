@@ -35,4 +35,15 @@ describe("AssignmentParser", () => {
     })
   })
 
+  describe("classifyMessage", () => {
+    it("can recognize a score submission", () => {
+      let messageType = parser.classifyMessage("<@ASDASD123> Eric scored 97 on assignment 3");
+      expect(messageType).to.eq("submitScore");
+    });
+    it("can recognize a overall score request", () => {
+      let messageType = parser.classifyMessage("<@xp-track> What is Carolyn's XP?")
+      expect(messageType).to.eq("getOverallScore")
+    });
+  })
 });
+
