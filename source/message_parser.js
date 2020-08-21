@@ -7,7 +7,13 @@ class MessageParser {
     this.scoreMatcher = /<[^>]*> ([A-z' ]+) score[a-z]* (\d+) on (.+)/
   }
   classifyMessage(message) {
-    let actionType = "submitScore"
+    let actionType;
+    let isAnAssignment = this.scoreMatcher.exec(message) != null;
+    if(isAnAssignment == true) {
+      actionType = "submitScore"
+    } else {
+      actionType = "getOverallScore"
+    }
     return actionType
   }
   messageToAssignment(message) {
