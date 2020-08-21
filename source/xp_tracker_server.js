@@ -25,15 +25,25 @@ app.post("/slack-events", jsonParser, async (request, response) => {
     response.send(body.challenge);
   } else if (body.event.type == "app_mention") {
     let parser = new MessageParser();
-    // let assignment = parser.messageToAssignment(message);
-    // response.send(assignment);
-    // submitScore(assignment.person, assignment.score, assignment.description);
-    let name = parser.nameFromScoreRequest(message)
+    if (parser.classifyMessage(message) == "submitScore") {
+      let assignment = parser.messageToAssignment(message);
+      response.send(assignment);
+      submitScore(assignment.person, assignment.score, assignment.description);
+    } else if (parser.classifyMessage(message) == "getOverallScore") {
 
-    let scoreMessage = await getOverallScore(name)
-    response.send(scoreMessage);
 
-    console.log(name,scoreMessage)
+      let name = parser.nameFromScoreRequest(message)
+
+      let scoreMessage = await getOverallScore(name)
+      response.send(scoreMessage);
+
+      console.log(name, scoreMessage)
+    } else {
+      console.log("unknown message type")
+      response.send("Error")
+      messageFromBot("I'm not sure what you're asking");
+    }
+
   } else {
     response.send("Error");
   }
@@ -46,25 +56,29 @@ app.listen(PORT, function () {
 
 let pool = new Pool(config.datasource);
 
-let submitScore = async (person, score, description) => {
-
-  let scoreConfirm = person + " got a " + score + " on " + description;
-  console.log(scoreConfirm);
-  console.log("config.slackBotAuth", config.slackBotAuth);
+let messageFromBot = (text) => {
   axios({
     method: 'post',
     url: 'https://tirasjsclass.slack.com/api/chat.meMessage?',
     data: {
       channel: "general",
-      text: scoreConfirm
+      text: text
     },
     headers: {
       Authorization: "Bearer " + config.slackBotAuth
     }
-  }).catch((error)=>{
+  }).catch((error) => {
     console.error(error);
   });
 
+}
+
+let submitScore = async (person, score, description) => {
+
+  let scoreConfirm = person + " got a " + score + " on " + description;;
+  console.log(scoreConfirm);
+  console.log("config.slackBotAuth", config.slackBotAuth);
+  messageFromBot(scoreConfirm);
 
   await pool.query('BEGIN');
   await pool.query("INSERT INTO assignments (person, score, description) VALUES ($1, $2, $3);", [person, score, description])
@@ -79,18 +93,6 @@ let getOverallScore = async (person) => {
   let overallScore = row.xp;
   let overallScoreMessage = person + " has " + overallScore + " xp";
 
-  axios({
-    method: 'post',
-    url: 'https://tirasjsclass.slack.com/api/chat.meMessage?',
-    data: {
-      channel: "general",
-      text: overallScoreMessage
-    },
-    headers: {
-      Authorization: "Bearer " + config.slackBotAuth
-    }
-  }).catch((error)=>{
-    console.error(error);
-  });
+  messageFromBot(overallScoreMessage);
   return overallScoreMessage
 }
