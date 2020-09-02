@@ -1,0 +1,43 @@
+{
+    init: function(elevators, floors) {
+
+
+        let elevatorNumber = 0
+        let floorNumber = 0
+        while(elevatorNumber < 4){
+           let elevator = elevators[elevatorNumber]
+           while(floorNumber < 6){
+               let floor = floors[floorNumber]
+               floor.on("up_button_pressed", function() {
+                   // Maybe tell an elevator to go to this floor?
+                   elevator.goToFloor(floor.floorNum())
+               })
+               floor.on("down_button_pressed", function() {
+                   // Maybe tell an elevator to go to this floor?
+                   elevator.goToFloor(floor.floorNum())
+               })
+               floorNumber = floorNumber+1
+           }
+           elevator.on("floor_button_pressed", function(floorNum) {
+               // Maybe tell the elevator to go to that floor?
+               elevator.goToFloor(floorNum);
+           })
+
+           elevatorNumber = elevatorNumber+1
+        }
+
+        // Whenever the elevator is idle (has no more queued destinations) ...
+       // elevator.on("idle", function() {
+            // let's go to all the floors (or did we forget one?)
+          //  elevator.goToFloor(0);
+          //  elevator.goToFloor(1);
+          //  elevator.goToFloor(2);
+          //  elevator.goToFloor(3);
+          //  elevator.goToFloor(4);
+      //  });
+
+    },
+    update: function(dt, elevators, floors) {
+        // We normally don't need to do anything here
+    }
+}
