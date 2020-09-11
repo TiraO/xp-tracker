@@ -72,16 +72,18 @@ let messageFromBot = (text) => {
   });
 
 }
+let userIsAnAdmin = (slackId)=> {
 
-let submitScore = async (person, score, description) => {
+}
+let submitScore = async (student, score, description) => {
 
-  let scoreConfirm = person + " got a " + score + " on " + description;;
+  let scoreConfirm = student + " got a " + score + " on " + description;;
   console.log(scoreConfirm);
   console.log("config.slackBotAuth", config.slackBotAuth);
   messageFromBot(scoreConfirm);
 
   await pool.query('BEGIN');
-  await pool.query("INSERT INTO assignments (person, score, description) VALUES ($1, $2, $3);", [person, score, description])
+  await pool.query("INSERT INTO assignments (person, score, description) VALUES ($1, $2, $3);", [student, score, description])
   await pool.query('COMMIT');
 
 };

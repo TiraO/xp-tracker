@@ -1,0 +1,1 @@
+INSERT INTO public.user_roles (slack_id, user_role, full_name) VALUES ('U015ZLPRCGH', 'admin', 'Eric Iworsley');
