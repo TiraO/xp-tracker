@@ -71,13 +71,19 @@ let messageFromBot = (text) => {
     console.error(error);
   });
 
-}
-let userIsAnAdmin = (slackId)=> {
+};
 
-}
+let isUserAnAdmin = async (slackId) => {
+  let response = await pool.query("select user_role from user_roles where slack_id=$1;", [slackId]);
+  let row = response.rows[0];
+  let userRole = row.user_role;
+  return userRole == 'admin';
+};
+
 let submitScore = async (student, score, description) => {
 
-  let scoreConfirm = student + " got a " + score + " on " + description;;
+  let scoreConfirm = student + " got a " + score + " on " + description;
+
   console.log(scoreConfirm);
   console.log("config.slackBotAuth", config.slackBotAuth);
   messageFromBot(scoreConfirm);
@@ -98,3 +104,5 @@ let getOverallScore = async (person) => {
   messageFromBot(overallScoreMessage);
   return overallScoreMessage
 }
+
+module.exports = { isUserAnAdmin }
