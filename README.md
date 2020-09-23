@@ -31,15 +31,16 @@ the student name, the score and the assignment name.  Example:
 
 
 # TODO
-- students can't add scores  
 - students can't see each other's scores
 - updating a score once it's added
 - when semester ends, I can review student history
-- sum the different assignment scores
-- students can see how many points they have
 - they can see what work they've gotten credit for / review their own work
+- students can ask "what's my score"
 
 # COMPLETED
+- sum the different assignment scores
+- students can see how many points they have
+- students can't add scores
 - bot responds when it did something
 - anyone can see a score for a person
     @xp_track what is Eric's score?
