@@ -28,7 +28,7 @@ app.post("/slack-events", jsonParser, async (request, response) => {
     if (parser.classifyMessage(message) == "submitScore") {
       let assignment = parser.messageToAssignment(message);
       response.send(assignment);
-      submitScore(assignment.person, assignment.score, assignment.description);
+      submitScore(assignment.person, assignment.score, assignment.description, body.event.user);
     } else if (parser.classifyMessage(message) == "getOverallScore") {
 
 
@@ -75,22 +75,31 @@ let messageFromBot = (text) => {
 
 let isUserAnAdmin = async (slackId) => {
   let response = await pool.query("select user_role from user_roles where slack_id=$1;", [slackId]);
-  let row = response.rows[0];
-  let userRole = row.user_role;
-  return userRole == 'admin';
+  if (response.rows.length == 0) {
+    return false
+  } else {
+    let row = response.rows[0];
+    let userRole = row.user_role;
+    return userRole == 'admin';
+  }
 };
 
-let submitScore = async (student, score, description) => {
+let submitScore = async (student, score, description, user) => {
+  if (await isUserAnAdmin(user) == true) {
+    let scoreConfirm = student + " got a " + score + " on " + description;
 
-  let scoreConfirm = student + " got a " + score + " on " + description;
+    console.log(scoreConfirm);
+    console.log("config.slackBotAuth", config.slackBotAuth);
+    messageFromBot(scoreConfirm);
 
-  console.log(scoreConfirm);
-  console.log("config.slackBotAuth", config.slackBotAuth);
-  messageFromBot(scoreConfirm);
-
-  await pool.query('BEGIN');
-  await pool.query("INSERT INTO assignments (person, score, description) VALUES ($1, $2, $3);", [student, score, description])
-  await pool.query('COMMIT');
+    await pool.query('BEGIN');
+    await pool.query("INSERT INTO assignments (person, score, description) VALUES ($1, $2, $3);", [student, score, description])
+    await pool.query('COMMIT');
+  }
+  else {
+    console.log(user + " tried to submit score but is not an admin");
+    messageFromBot("You do not have permission to add scores");
+  }
 
 };
 
