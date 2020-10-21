@@ -37,6 +37,10 @@ the student name, the score and the assignment name.  Example:
 - they can see what work they've gotten credit for / review their own work
 - students can ask "what's my score"
 
+# IN PROGRESS
+- submit scores by saying `@xp_tracker @Genai scored 100 on some assignment`
+- maybe an issue where slack events api changed?
+
 # COMPLETED
 - sum the different assignment scores
 - students can see how many points they have
