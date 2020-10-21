@@ -18,36 +18,39 @@ app.post("/assignments", jsonParser, (request, response) => {
 });
 
 app.post("/slack-events", jsonParser, async (request, response) => {
-  console.log(request.body);
-  let body = request.body;
-  let message = body.event.text;
-  if (body.type == "url_verification") {
-    response.send(body.challenge);
-  } else if (body.event.type == "app_mention") {
-    let parser = new MessageParser();
-    if (parser.classifyMessage(message) == "submitScore") {
-      let assignment = parser.messageToAssignment(message);
-      response.send(assignment);
-      submitScore(assignment.person, assignment.score, assignment.description, body.event.user);
-    } else if (parser.classifyMessage(message) == "getOverallScore") {
+  try {
+    console.log(request.body);
+    let body = request.body;
+    let message = body.event.text;
+    if (body.type == "url_verification") {
+      response.send(body.challenge);
+    } else if (body.event.type == "app_mention") {
+      let parser = new MessageParser();
+      if (parser.classifyMessage(message) == "submitScore") {
+        let assignment = parser.messageToAssignment(message);
+        response.send(assignment);
+        await submitScore(assignment.person, assignment.score, assignment.description, body.event.user);
+      } else if (parser.classifyMessage(message) == "getOverallScore") {
 
 
-      let name = parser.nameFromScoreRequest(message)
+        let name = parser.nameFromScoreRequest(message)
 
-      let scoreMessage = await getOverallScore(name)
-      response.send(scoreMessage);
+        let scoreMessage = await getOverallScore(name)
+        response.send(scoreMessage);
 
-      console.log(name, scoreMessage)
+        console.log(name, scoreMessage)
+      } else {
+        console.log("unknown message type")
+        response.send("Error")
+        messageFromBot("I'm not sure what you're asking");
+      }
+
     } else {
-      console.log("unknown message type")
-      response.send("Error")
-      messageFromBot("I'm not sure what you're asking");
+      response.send("Error");
     }
-
-  } else {
+  } catch (error) {
     response.send("Error");
   }
-
 });
 
 app.listen(PORT, function () {
