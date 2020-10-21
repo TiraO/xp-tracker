@@ -85,22 +85,25 @@ let isUserAnAdmin = async (slackId) => {
 };
 
 let submitScore = async (student, score, description, user) => {
-  if (await isUserAnAdmin(user) == true) {
-    let scoreConfirm = student + " got a " + score + " on " + description;
+  try {
+    if (await isUserAnAdmin(user) == true) {
+      let scoreConfirm = student + " got a " + score + " on " + description;
 
-    console.log(scoreConfirm);
-    console.log("config.slackBotAuth", config.slackBotAuth);
-    messageFromBot(scoreConfirm);
+      console.log(scoreConfirm);
+      console.log("config.slackBotAuth", config.slackBotAuth);
+      messageFromBot(scoreConfirm);
 
-    await pool.query('BEGIN');
-    await pool.query("INSERT INTO assignments (person, score, description) VALUES ($1, $2, $3);", [student, score, description])
-    await pool.query('COMMIT');
+      await pool.query('BEGIN');
+      await pool.query("INSERT INTO assignments (person, score, description) VALUES ($1, $2, $3);", [student, score, description])
+      await pool.query('COMMIT');
+    } else {
+      console.log(user + " tried to submit score but is not an admin");
+      messageFromBot("You do not have permission to add scores");
+    }
+  } catch (error) {
+    console.error(user + " tried to submit score but an error occurred", error);
+    messageFromBot("An error occurred");
   }
-  else {
-    console.log(user + " tried to submit score but is not an admin");
-    messageFromBot("You do not have permission to add scores");
-  }
-
 };
 
 let getOverallScore = async (person) => {
