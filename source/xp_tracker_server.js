@@ -42,14 +42,14 @@ app.post("/slack-events", jsonParser, async (request, response) => {
       } else {
         console.log("unknown message type")
         response.send("Error")
-        messageFromBot("I'm not sure what you're asking");
+        sendMessageFromBot("I'm not sure what you're asking");
       }
 
     } else {
       response.send("Error");
     }
   } catch (error) {
-    response.send("Error");
+    response.status(500).send("Error");
   }
 });
 
@@ -59,7 +59,7 @@ app.listen(PORT, function () {
 
 let pool = new Pool(config.datasource);
 
-let messageFromBot = (text) => {
+let sendMessageFromBot = (text) => {
   axios({
     method: 'post',
     url: 'https://tirasjsclass.slack.com/api/chat.meMessage?',
@@ -76,14 +76,18 @@ let messageFromBot = (text) => {
 
 };
 
+let userInTableIsAdmin = function (userResult) {
+  let row = userResult.rows[0];
+  let userRole = row.user_role;
+  return userRole == 'admin';
+};
 let isUserAnAdmin = async (slackId) => {
-  let response = await pool.query("select user_role from user_roles where slack_id=$1;", [slackId]);
-  if (response.rows.length == 0) {
-    return false
+  let userResult = await pool.query("select user_role from user_roles where slack_id=$1;", [slackId]);
+  let isUserInTable = userResult.rows.length != 0;
+  if (isUserInTable) {
+    return userInTableIsAdmin(userResult);
   } else {
-    let row = response.rows[0];
-    let userRole = row.user_role;
-    return userRole == 'admin';
+    return false
   }
 };
 
@@ -94,29 +98,34 @@ let submitScore = async (student, score, description, user) => {
 
       console.log(scoreConfirm);
       console.log("config.slackBotAuth", config.slackBotAuth);
-      messageFromBot(scoreConfirm);
+      sendMessageFromBot(scoreConfirm);
 
       await pool.query('BEGIN');
       await pool.query("INSERT INTO assignments (person, score, description) VALUES ($1, $2, $3);", [student, score, description])
       await pool.query('COMMIT');
     } else {
       console.log(user + " tried to submit score but is not an admin");
-      messageFromBot("You do not have permission to add scores");
+      sendMessageFromBot("You do not have permission to add scores");
     }
   } catch (error) {
     console.error(user + " tried to submit score but an error occurred", error);
-    messageFromBot("An error occurred");
+    sendMessageFromBot("An error occurred");
   }
+};
+
+let getScoreFromDatabase = async function (person) {
+  let response = await pool.query("select sum(score) as xp from assignments where person = $1;", [person]);
+  let row = response.rows[0];
+  let overallScore = row.xp;
+  return overallScore;
 };
 
 let getOverallScore = async (person) => {
 
-  let response = await pool.query("select sum(score) as xp from assignments where person = $1;", [person]);
-  let row = response.rows[0];
-  let overallScore = row.xp;
+  let overallScore = await getScoreFromDatabase(person);
   let overallScoreMessage = person + " has " + overallScore + " xp";
 
-  messageFromBot(overallScoreMessage);
+  sendMessageFromBot(overallScoreMessage);
   return overallScoreMessage
 }
 
