@@ -37,6 +37,17 @@ the student name, the score and the assignment name.  Example:
 - they can see what work they've gotten credit for / review their own work
 - students can ask "what's my score"
 
+
+@xp-tracker review Eric
+
+Eric
+-----------------------
+Sep 6, 20 | assignment 1 | 100xp
+Sep 7, 20 | assignment 3 | 100xp
+
+Total XP: 200xp
+
+
 # IN PROGRESS
 - submit scores by saying `@xp_tracker @Genai scored 100 on some assignment`
 - maybe an issue where slack events api changed?

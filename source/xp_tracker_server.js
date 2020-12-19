@@ -17,18 +17,18 @@ app.post("/assignments", jsonParser, (request, response) => {
   response.send("some text");
 });
 
-app.post("/slack-events", jsonParser, async (request, response) => {
+app.post("/slack-events", jsonParser, async (request, apiResponse) => {
   try {
     console.log(request.body);
     let body = request.body;
     let message = body.event.text;
     if (body.type == "url_verification") {
-      response.send(body.challenge);
+      apiResponse.send(body.challenge);
     } else if (body.event.type == "app_mention") {
       let parser = new MessageParser();
       if (parser.classifyMessage(message) == "submitScore") {
         let assignment = parser.messageToAssignment(message);
-        response.send(assignment);
+        apiResponse.send(assignment);
         await submitScore(assignment.person, assignment.score, assignment.description, body.event.user);
       } else if (parser.classifyMessage(message) == "getOverallScore") {
 
@@ -36,20 +36,33 @@ app.post("/slack-events", jsonParser, async (request, response) => {
         let name = parser.nameFromScoreRequest(message)
 
         let scoreMessage = await getOverallScore(name)
-        response.send(scoreMessage);
+        apiResponse.send(scoreMessage);
 
         console.log(name, scoreMessage)
-      } else {
+      } else if (parser.classifyMessage(message) == "reviewStudent") {
+
+        let name = parser.nameFromReviewRequest(message);
+
+        let history = await getScoreHistory(name);
+
+        let formattedHistory = formatScoreHistory(history)
+
+        apiResponse.send(formattedHistory);
+
+        console.log(name, history)
+      }
+
+      else {
         console.log("unknown message type")
-        response.send("Error")
+        apiResponse.send("Error")
         sendMessageFromBot("I'm not sure what you're asking");
       }
 
     } else {
-      response.send("Error");
+      apiResponse.send("Error");
     }
   } catch (error) {
-    response.status(500).send("Error");
+    apiResponse.status(500).send("Error");
   }
 });
 

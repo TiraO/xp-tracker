@@ -30,6 +30,12 @@ class MessageParser {
     let name = matchResults[1];
     return name;
   }
+  nameFromReviewRequest(message) {
+    let reviewRequestMatcher = /<[^>]*> review ([A-z]+)/i
+    let matchResults = reviewRequestMatcher.exec(message);
+    let name = matchResults[1];
+    return name;
+  }
 }
 
 module.exports = MessageParser;
